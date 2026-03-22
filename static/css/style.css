@@ -1065,6 +1065,38 @@ section { padding: 6rem 0; }
   .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
   .resume-highlights { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+  .about-text {
+    font-size: 0.92rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    padding-right: 0.5rem;
+  }
+
+  .about-card-glass {
+    width: 100%;
+    padding: 1.25rem;
+    margin: 0;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .code-body {
+    font-size: 0.75rem;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .container {
+    padding: 0 1rem;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0;
+  }
 }
 
 @media (max-width: 480px) {
