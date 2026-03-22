@@ -1042,15 +1042,21 @@ section { padding: 6rem 0; }
   .nav-links.open { transform: translateX(0); }
   .nav-link { font-size: 1rem; padding: 0.75rem 1rem; }
 
-  .hero-container { grid-template-columns: 1fr; text-align: center; gap: 2.5rem; }
+  .hero-container { grid-template-columns: 1fr; text-align: center; gap: 2rem; padding-top: 2rem; }
   .hero-image { order: -1; }
-  .image-frame { width: 240px; height: 240px; margin: 0 auto; }
-  .float-badge-1 { right: -10px; }
-  .float-badge-2 { right: -15px; }
-  .float-badge-3 { left: -15px; }
-  .hero-actions { justify-content: center; }
+  .image-frame { width: 200px; height: 200px; margin: 0 auto; }
+
+  .float-badge-1 { right: -5px; top: 10px; font-size: 0.7rem; padding: 0.3rem 0.6rem; }
+  .float-badge-2 { right: -5px; bottom: 30px; font-size: 0.7rem; padding: 0.3rem 0.6rem; }
+  .float-badge-3 { left: -5px; top: 40px; font-size: 0.7rem; padding: 0.3rem 0.6rem; }
+
+  .hero-name { font-size: 2.2rem; }
+  .hero-role { font-size: 1rem; }
+  .hero-actions { justify-content: center; flex-direction: column; align-items: center; }
+  .btn { width: 80%; justify-content: center; }
   .hero-socials { justify-content: center; }
-  .hero-subtitle { margin: 0 auto 2rem; }
+  .hero-subtitle { font-size: 0.9rem; margin: 0 auto 1.5rem; padding: 0 1rem; }
+  .visitor-badge { display: none; }
 
   .about-grid { grid-template-columns: 1fr; gap: 2rem; }
   .skills-grid { grid-template-columns: 1fr; }
@@ -1068,16 +1074,7 @@ section { padding: 6rem 0; }
   .resume-actions { flex-direction: column; }
   section { padding: 4rem 0; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
+  .image-frame { width: 180px; height: 180px; }
+  .hero-name { font-size: 1.9rem; }
+  #hero { padding: 6rem 1rem 3rem; }
 }
-
-/* ── VISITOR BADGE (navbar) ──────────────────────────────── */
-.visitor-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(0,212,255,0.08);
-  border: 1px solid rgba(0,212,255,0.2);
-  border-radius: 99px;
-  padding: 4px 12px;
-  font-size: 0.78rem; font-weight: 600;
-  color: var(--accent);
-}
-.visitor-badge i { font-size: 0.75rem; }
