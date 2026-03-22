@@ -1,0 +1,121 @@
+{
+  "hero": {
+    "name": "U.Keerthivasan",
+    "role": "Aspiring Python Developer",
+    "subtitle": "Passionate about building clean, scalable web applications with Python & modern web technologies.",
+    "availability": "Available for Internship",
+    "social": {
+      "email": "keerthivasan5006@gmail.com",
+      "github": "https://github.com/keerthivasan369",
+      "linkedin": "https://linkedin.com/in/keerthivasan-u-9b53022a6",
+      "whatsapp": "https://wa.me/6374603767"
+    }
+  },
+  "about": {
+    "bio1": "I'm a third-year Artificial Intelligence and Data Science student with a strong passion for Python and web development. With a CGPA of 8.66, I believe in learning by doing \u2014 every project I build teaches me something new.",
+    "bio2": "My journey started with Python scripting, and I quickly fell in love with Flask for building backend systems. I'm deeply fascinated by AI/ML and how technology can solve real-world problems elegantly.",
+    "bio3": "My goal is to become a skilled Python developer who can architect robust, scalable applications. I bring a designer's eye and an engineer's mindset to everything I create.",
+    "cgpa": "8.66",
+    "projects_count": "3+",
+    "technologies_count": "5+"
+  },
+  "skills": [
+    {
+      "name": "HTML5",
+      "icon": "fab fa-html5",
+      "percent": 90
+    },
+    {
+      "name": "CSS3",
+      "icon": "fab fa-css3-alt",
+      "percent": 85
+    },
+    {
+      "name": "JavaScript",
+      "icon": "fab fa-js-square",
+      "percent": 60
+    },
+    {
+      "name": "Python",
+      "icon": "fab fa-python",
+      "percent": 80
+    },
+    {
+      "name": "Flask",
+      "icon": "fas fa-flask",
+      "percent": 50
+    },
+    {
+      "name": "Django",
+      "icon": "fas fa-layer-group",
+      "percent": 50
+    }
+  ],
+  "projects": [
+    {
+      "id": "p1",
+      "number": "01",
+      "title": "Healthcare Access Portal",
+      "description": "A patient management system for 'All is Well' hospital. Solved the problem of manual appointment scheduling using design thinking \u2014 reducing wait times and improving patient experience.",
+      "tags": [
+        "HTML/CSS/JS"
+      ],
+      "github": "https://github.com/Keerthivasan369/Naan_mudhalvan_project_1/tree/master",
+      "demo": "#",
+      "image": "project1.png"
+    },
+    {
+      "id": "p2",
+      "number": "02",
+      "title": "Object-Detection",
+      "description": "Object prediction is a technique in artificial intelligence that identifies and predicts objects within images or data. It uses machine learning models to analyze patterns, recognize features, and make accurate predictions. This technology is widely used in applications like image recognition, self-driving cars, and security systems.",
+      "tags": [
+        "Python",
+        "OpenCV"
+      ],
+      "github": "https://github.com/Keerthivasan369/object-predection",
+      "demo": "#",
+      "image": "project1.png"
+    },
+    {
+      "id": "p3",
+      "number": "03",
+      "title": "Portfolio",
+      "description": "An inclusive urban housing solution platform designed with eco-consciousness. Uses design thinking to address affordability, sustainability, and accessibility.",
+      "tags": [
+        "Python",
+        "Flask",
+        "Jinja"
+      ],
+      "github": "https://github.com/keerthivasan369/portfolio",
+      "demo": "#",
+      "image": "project1.png"
+    },
+    {
+      "id": "p4",
+      "number": "04",
+      "title": "Smart-Kiosk",
+      "description": "kiosk system designed to deliver smart and user-friendly interactions. It showcases your skills in Python, Flask, and front-end technologies, along with features like voice assistance, automation, and real-time response handling. The project reflects your ability to integrate AI-driven solutions into practical applications, focusing on improving user experience and accessibility.",
+      "tags": [
+        "Python",
+        "Flask",
+        "Html",
+        "css",
+        "js",
+        "GPT-API key"
+      ],
+      "github": "https://github.com/Keerthivasan369/admin_hub",
+      "demo": "#",
+      "image": "project1.png"
+    }
+  ],
+  "contact": {
+    "email": "keerthivasan5006@gmail.com",
+    "whatsapp": "https://wa.me/916374603767",
+    "linkedin": "https://linkedin.com/in/keerthivasan-u-9b53022a6",
+    "github": "https://github.com/keerthivasan369",
+    "whatsapp_display": "Whatsapp",
+    "linkedin_display": "linkedin.com",
+    "github_display": "github.com"
+  }
+}

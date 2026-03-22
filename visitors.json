@@ -1,0 +1,18 @@
+{
+  "total": 2,
+  "today": 2,
+  "this_week": 2,
+  "this_month": 2,
+  "daily": {
+    "2026-03-22": 2
+  },
+  "monthly": {
+    "2026-03": 2
+  },
+  "pages": {
+    "/": 2
+  },
+  "last_reset_day": "2026-03-22",
+  "last_reset_week": "2026-W11",
+  "last_reset_month": "2026-03"
+}

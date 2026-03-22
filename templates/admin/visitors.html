@@ -1,0 +1,169 @@
+{% extends 'admin/base.html' %}
+{% block title %}Visitor Analytics{% endblock %}
+{% block page_title %}Visitor Analytics{% endblock %}
+
+{% block content %}
+
+<div class="stats-row" style="margin-bottom:1.5rem;">
+  <div class="stat-card cyan">
+    <div class="stat-card-top"><span class="stat-card-label">Total Visits</span><div class="stat-card-icon"><i class="fas fa-eye"></i></div></div>
+    <div class="stat-card-num">{{ visitors.total }}</div>
+    <div class="stat-card-sub">All time</div>
+  </div>
+  <div class="stat-card purple">
+    <div class="stat-card-top"><span class="stat-card-label">Today</span><div class="stat-card-icon"><i class="fas fa-sun"></i></div></div>
+    <div class="stat-card-num">{{ visitors.today }}</div>
+    <div class="stat-card-sub">Since midnight</div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-card-top"><span class="stat-card-label">This Week</span><div class="stat-card-icon"><i class="fas fa-calendar-week"></i></div></div>
+    <div class="stat-card-num">{{ visitors.this_week }}</div>
+    <div class="stat-card-sub">Current week</div>
+  </div>
+  <div class="stat-card orange">
+    <div class="stat-card-top"><span class="stat-card-label">This Month</span><div class="stat-card-icon"><i class="fas fa-calendar"></i></div></div>
+    <div class="stat-card-num">{{ visitors.this_month }}</div>
+    <div class="stat-card-sub">Current month</div>
+  </div>
+</div>
+
+<!-- Charts -->
+<div class="panel" style="margin-bottom:1.5rem;">
+  <div class="panel-header">
+    <span class="panel-title"><i class="fas fa-chart-area" style="color:var(--accent);margin-right:6px;"></i>Daily Visitor Trend (Last 30 Days)</span>
+    <button onclick="resetVisitors()" class="btn-sm btn-danger"><i class="fas fa-redo"></i> Reset Counts</button>
+  </div>
+  <div class="panel-body">
+    <div style="height:280px;"><canvas id="dailyChart"></canvas></div>
+  </div>
+</div>
+
+<div style="display:grid;grid-template-columns:1.5fr 1fr;gap:1.25rem;">
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title"><i class="fas fa-chart-bar" style="color:var(--accent2);margin-right:6px;"></i>Monthly Visitors</span>
+    </div>
+    <div class="panel-body">
+      <div style="height:220px;"><canvas id="monthlyChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title"><i class="fas fa-file-alt" style="color:var(--accent3);margin-right:6px;"></i>Page Hits Breakdown</span>
+    </div>
+    <div class="panel-body" style="padding:0;">
+      {% if visitors.pages %}
+      <table class="data-table">
+        <thead><tr><th>Page</th><th>Visits</th><th>%</th></tr></thead>
+        <tbody>
+          {% set total_page = visitors.pages.values()|sum %}
+          {% for page, count in visitors.pages.items()|sort(attribute='1', reverse=True) %}
+          <tr>
+            <td style="color:var(--accent);">{{ page }}</td>
+            <td><strong>{{ count }}</strong></td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <div style="flex:1;height:4px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden;">
+                  <div style="width:{{ ((count / total_page) * 100)|round }}%;height:100%;background:var(--accent);border-radius:99px;"></div>
+                </div>
+                <span style="font-size:0.75rem;color:var(--text2);white-space:nowrap;">{{ ((count / total_page) * 100)|round }}%</span>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div style="text-align:center;padding:2rem;color:var(--text2);font-size:0.85rem;">No page data yet.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Daily Breakdown Table -->
+{% if visitors.daily %}
+<div class="panel" style="margin-top:1.5rem;">
+  <div class="panel-header">
+    <span class="panel-title"><i class="fas fa-table" style="color:var(--warning);margin-right:6px;"></i>Daily Breakdown</span>
+  </div>
+  <div class="panel-body" style="padding:0;">
+    <table class="data-table">
+      <thead><tr><th>Date</th><th>Visitors</th><th>Trend</th></tr></thead>
+      <tbody>
+        {% set max_v = visitors.daily.values()|max %}
+        {% for date, count in visitors.daily.items()|sort(attribute='0', reverse=True) %}
+        <tr>
+          <td>{{ date }}</td>
+          <td><strong>{{ count }}</strong></td>
+          <td style="width:200px;">
+            <div style="height:6px;background:rgba(255,255,255,0.05);border-radius:99px;overflow:hidden;">
+              <div style="width:{{ ((count / max_v) * 100)|round }}%;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:99px;"></div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const dailyData   = {{ visitors.daily   | tojson }};
+const monthlyData = {{ visitors.monthly | tojson }};
+
+// Daily
+const ctxD = document.getElementById('dailyChart').getContext('2d');
+const g = ctxD.createLinearGradient(0, 0, 0, 280);
+g.addColorStop(0, 'rgba(0,212,255,0.35)');
+g.addColorStop(1, 'rgba(0,212,255,0)');
+new Chart(ctxD, {
+  type: 'line',
+  data: {
+    labels: Object.keys(dailyData),
+    datasets: [{
+      label: 'Visitors', data: Object.values(dailyData),
+      borderColor: '#00d4ff', backgroundColor: g,
+      borderWidth: 2, fill: true, tension: 0.4,
+      pointRadius: 4, pointBackgroundColor: '#00d4ff',
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8892a4', font: { size: 11 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8892a4', font: { size: 11 } }, beginAtZero: true }
+    }
+  }
+});
+
+// Monthly
+const ctxM = document.getElementById('monthlyChart').getContext('2d');
+new Chart(ctxM, {
+  type: 'bar',
+  data: {
+    labels: Object.keys(monthlyData),
+    datasets: [{ label: 'Monthly', data: Object.values(monthlyData), backgroundColor: 'rgba(124,58,237,0.55)', borderColor: '#7c3aed', borderWidth: 2, borderRadius: 6 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: '#8892a4', font: { size: 11 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8892a4', font: { size: 11 } }, beginAtZero: true }
+    }
+  }
+});
+
+async function resetVisitors() {
+  if (!confirm('Reset ALL visitor counts? Cannot be undone.')) return;
+  const d = await postForm('/admin/visitors/reset');
+  if (d.success) { alert('Reset done!'); location.reload(); }
+}
+</script>
+{% endblock %}

@@ -1,0 +1,235 @@
+{% extends 'admin/base.html' %}
+{% set unread_count = unread %}
+
+{% block title %}Dashboard{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- STAT CARDS -->
+<div class="stats-row">
+  <div class="stat-card cyan">
+    <div class="stat-card-top">
+      <span class="stat-card-label">Total Visitors</span>
+      <div class="stat-card-icon"><i class="fas fa-eye"></i></div>
+    </div>
+    <div class="stat-card-num" id="ds-total">{{ visitors.total }}</div>
+    <div class="stat-card-sub">All time</div>
+  </div>
+  <div class="stat-card purple">
+    <div class="stat-card-top">
+      <span class="stat-card-label">Today</span>
+      <div class="stat-card-icon"><i class="fas fa-calendar-day"></i></div>
+    </div>
+    <div class="stat-card-num" id="ds-today">{{ visitors.today }}</div>
+    <div class="stat-card-sub">Visitors today</div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-card-top">
+      <span class="stat-card-label">This Week</span>
+      <div class="stat-card-icon"><i class="fas fa-calendar-week"></i></div>
+    </div>
+    <div class="stat-card-num" id="ds-week">{{ visitors.this_week }}</div>
+    <div class="stat-card-sub">Visitors this week</div>
+  </div>
+  <div class="stat-card orange">
+    <div class="stat-card-top">
+      <span class="stat-card-label">Messages</span>
+      <div class="stat-card-icon"><i class="fas fa-envelope"></i></div>
+    </div>
+    <div class="stat-card-num" id="ds-msgs">{{ messages|length }}</div>
+    <div class="stat-card-sub">
+      {% if unread > 0 %}<span style="color:#f59e0b;">{{ unread }} unread</span>{% else %}All read{% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- CHARTS ROW -->
+<div style="display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;margin-bottom:1.5rem;">
+
+  <!-- Daily Visitors Chart -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title"><i class="fas fa-chart-area" style="color:var(--accent);margin-right:6px;"></i>Daily Visitors (Last 30 Days)</span>
+      <button class="btn-sm btn-primary-sm" onclick="refreshStats()"><i class="fas fa-sync"></i> Refresh</button>
+    </div>
+    <div class="panel-body">
+      <div class="chart-wrapper"><canvas id="dailyChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- Monthly Chart -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title"><i class="fas fa-chart-bar" style="color:var(--accent2);margin-right:6px;"></i>Monthly</span>
+    </div>
+    <div class="panel-body">
+      <div class="chart-wrapper"><canvas id="monthlyChart"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Messages + Quick Stats -->
+<div style="display:grid;grid-template-columns:1.5fr 1fr;gap:1.25rem;">
+
+  <!-- Recent Messages -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title"><i class="fas fa-inbox" style="color:var(--accent3);margin-right:6px;"></i>Recent Messages</span>
+      <a href="{{ url_for('admin_messages') }}" class="btn-sm btn-primary-sm">View All</a>
+    </div>
+    <div class="panel-body" style="padding:0;">
+      {% if messages %}
+      <table class="data-table">
+        <thead><tr><th>From</th><th>Message</th><th>Time</th></tr></thead>
+        <tbody>
+          {% for msg in messages[:5] %}
+          <tr class="{% if not msg.read %}unread-row{% endif %}">
+            <td>
+              {% if not msg.read %}<span class="unread-dot"></span>{% endif %}
+              <strong>{{ msg.name }}</strong><br>
+              <small style="color:var(--text2);">{{ msg.email }}</small>
+            </td>
+            <td style="max-width:200px;">
+              <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block;max-width:200px;" title="{{ msg.message }}">
+                {{ msg.message[:80] }}{% if msg.message|length > 80 %}...{% endif %}
+              </span>
+            </td>
+            <td style="white-space:nowrap;color:var(--text2);font-size:0.8rem;">{{ msg.timestamp }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div style="text-align:center;padding:2rem;color:var(--text2);">
+        <i class="fas fa-inbox" style="font-size:2rem;opacity:0.3;margin-bottom:0.5rem;display:block;"></i>
+        No messages yet
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Page Hit Stats + Quick Links -->
+  <div style="display:flex;flex-direction:column;gap:1.25rem;">
+    <div class="panel">
+      <div class="panel-header">
+        <span class="panel-title"><i class="fas fa-map-marker-alt" style="color:var(--warning);margin-right:6px;"></i>Page Hits</span>
+      </div>
+      <div class="panel-body" style="padding:0;">
+        {% if visitors.pages %}
+        <table class="data-table">
+          <thead><tr><th>Page</th><th>Hits</th></tr></thead>
+          <tbody>
+            {% for page, count in visitors.pages.items()|sort(attribute='1', reverse=True) %}
+            <tr>
+              <td style="color:var(--accent);">{{ page }}</td>
+              <td><strong>{{ count }}</strong></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div style="text-align:center;padding:1.5rem;color:var(--text2);font-size:0.85rem;">No data yet</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><span class="panel-title">Quick Actions</span></div>
+      <div class="panel-body" style="display:flex;flex-direction:column;gap:0.6rem;">
+        <a href="{{ url_for('admin_content') }}" class="btn-sm btn-primary-sm" style="justify-content:center;"><i class="fas fa-edit"></i> Edit Portfolio Content</a>
+        <a href="{{ url_for('admin_messages') }}" class="btn-sm btn-success" style="justify-content:center;"><i class="fas fa-envelope"></i> View All Messages</a>
+        <a href="{{ url_for('admin_visitors') }}" class="btn-sm btn-primary-sm" style="justify-content:center;"><i class="fas fa-chart-line"></i> Full Visitor Analytics</a>
+        <button onclick="resetVisitors()" class="btn-sm btn-danger" style="justify-content:center;border:1px solid rgba(239,68,68,0.3);"><i class="fas fa-redo"></i> Reset Visitor Count</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+// ── Chart data from Flask ──────────────────────────────────
+const dailyData  = {{ visitors.daily | tojson }};
+const monthlyData = {{ visitors.monthly | tojson }};
+
+// Daily chart
+const dailyLabels = Object.keys(dailyData).slice(-30);
+const dailyValues = Object.values(dailyData).slice(-30);
+
+const ctxD = document.getElementById('dailyChart').getContext('2d');
+const dailyGrad = ctxD.createLinearGradient(0, 0, 0, 220);
+dailyGrad.addColorStop(0, 'rgba(0,212,255,0.3)');
+dailyGrad.addColorStop(1, 'rgba(0,212,255,0)');
+
+new Chart(ctxD, {
+  type: 'line',
+  data: {
+    labels: dailyLabels,
+    datasets: [{
+      label: 'Visitors',
+      data: dailyValues,
+      borderColor: '#00d4ff',
+      backgroundColor: dailyGrad,
+      borderWidth: 2,
+      fill: true,
+      tension: 0.4,
+      pointRadius: 3,
+      pointBackgroundColor: '#00d4ff',
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { mode: 'index' } },
+    scales: {
+      x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8892a4', maxTicksLimit: 7, font: { size: 10 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8892a4', font: { size: 10 } }, beginAtZero: true }
+    }
+  }
+});
+
+// Monthly chart
+const mLabels = Object.keys(monthlyData);
+const mValues = Object.values(monthlyData);
+const ctxM = document.getElementById('monthlyChart').getContext('2d');
+new Chart(ctxM, {
+  type: 'bar',
+  data: {
+    labels: mLabels,
+    datasets: [{
+      label: 'Monthly',
+      data: mValues,
+      backgroundColor: 'rgba(124,58,237,0.5)',
+      borderColor: '#7c3aed',
+      borderWidth: 2, borderRadius: 6,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      x: { grid: { display: false }, ticks: { color: '#8892a4', font: { size: 10 } } },
+      y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8892a4', font: { size: 10 } }, beginAtZero: true }
+    }
+  }
+});
+
+// Refresh live stats
+async function refreshStats() {
+  const data = await fetch('/admin/api/stats').then(r => r.json());
+  document.getElementById('ds-total').textContent = data.total;
+  document.getElementById('ds-today').textContent = data.today;
+  document.getElementById('ds-week').textContent  = data.this_week;
+  document.getElementById('ds-msgs').textContent  = data.msg_count;
+}
+setInterval(refreshStats, 30000); // auto-refresh every 30s
+
+// Reset visitors
+async function resetVisitors() {
+  if (!confirm('Reset all visitor counts? This cannot be undone.')) return;
+  const data = await postForm('/admin/visitors/reset');
+  if (data.success) { alert('Visitor counts reset!'); location.reload(); }
+}
+</script>
+{% endblock %}

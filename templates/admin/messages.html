@@ -1,0 +1,79 @@
+{% extends 'admin/base.html' %}
+{% block title %}Messages{% endblock %}
+{% block page_title %}Contact Messages{% endblock %}
+
+{% block content %}
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;">
+  <p style="color:var(--text2);font-size:0.9rem;">
+    {{ messages|length }} total message{% if messages|length != 1 %}s{% endif %} in your inbox.
+  </p>
+  {% if messages %}
+  <button onclick="deleteAll()" class="btn-sm btn-danger">
+    <i class="fas fa-trash"></i> Delete All
+  </button>
+  {% endif %}
+</div>
+
+{% if messages %}
+<div id="messages-container">
+  {% for msg in messages %}
+  <div class="panel" id="msg-{{ msg.id }}" style="margin-bottom:1rem;{% if not msg.read %}border-left:3px solid var(--accent);{% endif %}">
+    <div class="panel-header">
+      <div style="display:flex;align-items:center;gap:1rem;">
+        <div style="width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1rem;color:#fff;flex-shrink:0;">
+          {{ msg.name[0].upper() }}
+        </div>
+        <div>
+          <div style="font-weight:700;">{{ msg.name }}
+            {% if not msg.read %}<span style="font-size:0.7rem;background:var(--accent);color:#000;padding:2px 7px;border-radius:99px;margin-left:8px;font-weight:700;">NEW</span>{% endif %}
+          </div>
+          <div style="font-size:0.8rem;color:var(--text2);">
+            <a href="mailto:{{ msg.email }}" style="color:var(--accent);text-decoration:none;">{{ msg.email }}</a>
+            &nbsp;·&nbsp; {{ msg.timestamp }}
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:center;">
+        <a href="mailto:{{ msg.email }}?subject=Re: Your message on Keerthivasan's Portfolio" class="btn-sm btn-success">
+          <i class="fas fa-reply"></i> Reply
+        </a>
+        <button onclick="deleteMsg('{{ msg.id }}')" class="btn-sm btn-danger">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+    <div class="panel-body">
+      <p style="color:var(--text);line-height:1.75;white-space:pre-wrap;">{{ msg.message }}</p>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div style="text-align:center;padding:4rem 2rem;color:var(--text2);">
+  <i class="fas fa-inbox" style="font-size:3rem;opacity:0.2;margin-bottom:1rem;display:block;"></i>
+  <h3 style="font-size:1.1rem;margin-bottom:0.5rem;">No messages yet</h3>
+  <p style="font-size:0.9rem;">When visitors send you a message through your portfolio, it will appear here.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function deleteMsg(id) {
+  if (!confirm('Delete this message?')) return;
+  const data = await postForm('/admin/messages/delete/' + id);
+  if (data.success) {
+    const el = document.getElementById('msg-' + id);
+    el.style.transition = 'all 0.3s';
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(20px)';
+    setTimeout(() => el.remove(), 300);
+  }
+}
+async function deleteAll() {
+  if (!confirm('Delete ALL messages permanently? This cannot be undone.')) return;
+  const data = await postForm('/admin/messages/delete-all');
+  if (data.success) location.reload();
+}
+</script>
+{% endblock %}

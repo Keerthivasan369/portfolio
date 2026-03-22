@@ -1,0 +1,76 @@
+{% extends 'admin/base.html' %}
+{% block title %}Settings{% endblock %}
+{% block page_title %}Admin Settings{% endblock %}
+
+{% block content %}
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;">
+
+  <!-- Change Password -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title"><i class="fas fa-lock" style="color:var(--accent);margin-right:6px;"></i>Change Password</span>
+    </div>
+    <div class="panel-body">
+      {% if msg %}
+      <div class="alert alert-success" style="margin-bottom:1rem;">{{ msg|safe }}</div>
+      {% endif %}
+      {% if error %}
+      <div class="alert alert-danger" style="margin-bottom:1rem;">{{ error }}</div>
+      {% endif %}
+
+      <form method="POST">
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label>Current Password</label>
+          <input type="password" name="current_password" placeholder="••••••••" required />
+        </div>
+        <div class="form-group" style="margin-bottom:1rem;">
+          <label>New Password</label>
+          <input type="password" name="new_password" placeholder="Min 6 characters" required />
+        </div>
+        <div class="form-group" style="margin-bottom:1.25rem;">
+          <label>Confirm New Password</label>
+          <input type="password" name="confirm_password" placeholder="Repeat new password" required />
+        </div>
+        <button type="submit" class="submit-btn"><i class="fas fa-key"></i> Update Password</button>
+      </form>
+
+      <div class="alert alert-info" style="margin-top:1.5rem;font-size:0.82rem;">
+        <i class="fas fa-info-circle"></i>
+        After updating, you'll get a new hash. Copy it and replace <code>ADMIN_PASSWORD_HASH</code> in <code>app.py</code>, then restart the server.
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Info -->
+  <div>
+    <div class="panel" style="margin-bottom:1.25rem;">
+      <div class="panel-header"><span class="panel-title"><i class="fas fa-shield-alt" style="color:var(--accent2);margin-right:6px;"></i>Admin Info</span></div>
+      <div class="panel-body">
+        <table class="data-table">
+          <tr><td style="color:var(--text2);">Username</td><td><strong>admin</strong></td></tr>
+          <tr><td style="color:var(--text2);">Admin URL</td><td><code>/admin</code></td></tr>
+          <tr><td style="color:var(--text2);">Login URL</td><td><code>/admin/login</code></td></tr>
+          <tr><td style="color:var(--text2);">Logout URL</td><td><code>/admin/logout</code></td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header"><span class="panel-title"><i class="fas fa-database" style="color:var(--accent3);margin-right:6px;"></i>Data Files</span></div>
+      <div class="panel-body">
+        <p style="color:var(--text2);font-size:0.85rem;margin-bottom:1rem;">All data is stored as JSON files in your project root:</p>
+        <table class="data-table">
+          <tr><td><code style="color:var(--accent);">portfolio.json</code></td><td style="color:var(--text2);font-size:0.82rem;">All editable portfolio content</td></tr>
+          <tr><td><code style="color:var(--accent);">messages.json</code></td><td style="color:var(--text2);font-size:0.82rem;">Contact form submissions</td></tr>
+          <tr><td><code style="color:var(--accent);">visitors.json</code></td><td style="color:var(--text2);font-size:0.82rem;">Visitor tracking data</td></tr>
+        </table>
+        <div class="alert alert-info" style="margin-top:1rem;font-size:0.82rem;">
+          <i class="fas fa-info-circle"></i> Back these up before deploying or resetting.
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
